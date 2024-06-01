@@ -1,0 +1,103 @@
+
+.authContainer {
+  padding: 15%;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  overflow-y: hidden;
+  position: fixed;
+}
+
+.display-pic img {
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+}
+
+.form {
+  width: 500px;
+  padding: 0 2%;
+  margin-left: 0;
+  overflow-y: hidden;
+}
+
+.form h1 {
+  margin-bottom: 10px;
+  color: rgb(120, 69, 69);
+}
+
+.form label,
+.form input,
+.form textarea {
+  display: block;
+  width: 100%;
+  color: rgb(120, 69, 69);
+}
+
+.form input,
+.form textarea {
+  font: inherit;
+  padding: 0.25rem;
+  margin-top: 5px;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.actions button {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.5rem 1.5rem;
+  margin-top: 15px;
+  border-radius: 4px;
+  background-color:  rgb(120, 69, 69);
+  color: white;
+  border: none;
+}
+
+.actions a {
+  text-decoration: none;
+  background-color: transparent;
+  font-size: 1.5em;
+  margin-left: 10px;
+  color: rgb(120, 69, 69);
+}
+
+.actions button:hover {
+  background-color: white;
+  color: rgb(120, 69, 69);
+  border: 1px solid rgb(120, 69, 69);
+}
+
+.actions a:hover {
+  scale: 1.2;
+  text-decoration: underline;
+  transition: 0.5s ease-in;
+}
+
+@media (max-width: 834px) {
+  .authContainer {
+    padding: 40% 5%;
+    gap: 0.2px;
+  }
+
+  .form {
+    width: 300px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 575px) {
+  .display-pic img {
+    display: none;
+  }
+
+  .form {
+    padding: 45% 10%;
+    width: 350px;
+  }
+}

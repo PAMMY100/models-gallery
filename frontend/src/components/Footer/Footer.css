@@ -1,0 +1,31 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+.socials {
+  display: flex;
+  gap: 2em;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.links {
+  display: flex;
+  gap: 4em;
+  margin: 0 auto;
+  margin-bottom: 1.5em;
+  cursor: pointer;
+}
+
+@media(max-width: 575px) {
+  .socials {
+    margin: 0 auto;
+  }
+  .links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
