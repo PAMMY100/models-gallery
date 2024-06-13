@@ -53,9 +53,13 @@
   object-fit: cover;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 843px) {
   .about {
     padding: 20% 0;
+  }
+
+  .col1 img {
+    width: 100%;
   }
 }
 
@@ -72,5 +76,8 @@
   .meet-team ul {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+  .col1 img {
+    width: 100%;
   }
 }

@@ -20,9 +20,25 @@ const cartSlice = createSlice({
           quantity: 1,
           totalPrice: newItem.price
         })
+        setTimeout(() => {
+          alert('Item added to cart')
+        }, 1000)
       } else {
         existingItem.quantity++;
         existingItem.totalPrice = existingItem.totalPrice + newItem.price
+      }
+      if(localStorage.getItem('token')) {
+        fetch('http://localhost:4000/addtocart',{
+          method: 'POST',
+          headers: {
+            Accept: 'application/form-data',
+            'token': `${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({'Items': state.items})
+        })
+        .then((response) => response.json())
+        .then((data) => console.log(data));
       }
     },
     removeFromCart(state, action){

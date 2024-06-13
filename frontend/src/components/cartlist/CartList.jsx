@@ -16,19 +16,25 @@ const CartList = (props) => {
   }
 
   return (
+    <>
       <div className='cart-item'>
         <img src={props.item.img} alt="productImage" />
         <div className="cart-elements">
           <p>{props.item.category}</p>
-          <p>Price - ${props.item.price}</p>
-          <p>qty - {props.item.quantity}</p>
+          <p>${props.item.price}</p>
+          
         </div>
-        <p>
+        <div className='quantity-container'>
+          <p className='quantityDigit'>{props.item.quantity}</p>
+          <p className='button-container'>
           <button className='cartbtn' onClick={addItem}>+</button>
           <button className='cartbtn' onClick={removeItem}>-</button>
         </p>
-        <p className="price">Total - ${Number(props.item.totalPrice)}</p>
+        </div>
+        <p className="price">${Number(props.item.totalPrice)}</p>
       </div>
+      <hr />
+    </>
   )
 }
 

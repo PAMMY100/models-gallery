@@ -1,21 +1,26 @@
-import { Link, useSearchParams, Form } from 'react-router-dom'
+import { Link, Form} from 'react-router-dom'
 import './Authform.css'
 import { useState } from 'react';
-import { useSignup } from '../../utils';
+import { useLogin, useSignup } from '../../utils';
 import displayImg from '../../assets/login-display-img.jpg'
 
 
+
 const Authform = () => {
-   const [searchParams] = useSearchParams();
+   const [authMode, setAuthMode] = useState('login')
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: "",
   })
-  const {error, state, fetcher} = useSignup()
 
-  const isLogin = searchParams.get('mode') === 'login'
-  // const isSubmitting = nagivation.state === 'submitting'
+  const {errorStage, loading, fetchSignup} = useSignup()
+ const {loginError, logloading, fetchLogin} = useLogin()
+
+
+
+  // const isLogin = searchParams.get('mode') === 'login'
+
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value})
@@ -23,12 +28,16 @@ const Authform = () => {
 
   const login = async () => {
     console.log("Logging in data", formData);
-    fetcher(formData)
+    fetchLogin(formData)
   }
 
   const signup = async (e) => {
     console.log("signing up data", formData)
-    fetcher(formData)
+    fetchSignup(formData)
+  }
+
+  const switchAuth = () => {
+    setAuthMode(prev=> prev === 'login' ? 'signup' : 'login')
   }
 
   return (
@@ -37,10 +46,12 @@ const Authform = () => {
         <img src={displayImg} alt="display"/>
       </div>
       <Form className='form'>
-        <h1>{isLogin ? 'Log in' : 'Sign up'}</h1>
-        {error && <p>User Registration fails! use a unique details</p>}
-        {!isLogin && <p>
-          <label htmlFor="username">username</label>
+        <h1>{authMode === 'login' ? 'Log in' : 'Sign up'}</h1>
+        <p className='detailsText'>Enter your details below</p>
+        {errorStage && <p className='error'>User Registration fails! use a unique details</p>}
+        {loginError && <p className='error'>user not found, Please verify details</p>}
+        {authMode === 'signup' && <p>
+          <label htmlFor="username">Username</label>
           <input
             type="text"
             id='username'
@@ -71,8 +82,8 @@ const Authform = () => {
             required />
         </p>
         <div className='actions'>
-          <Link to={`?mode= ${isLogin ? 'signup' : 'login'}`}>{isLogin ? 'Register' : 'Login'}</Link>
-          <button onClick={() => isLogin ? login(): signup()}>{state ? 'Submitting...' : `${isLogin ? 'Login' : 'Save'}`}</button>
+          <Link to={`?mode= ${authMode === 'login' ? 'signup' : 'login'}`} onClick={switchAuth}>{authMode === 'login' ? 'Register' : 'Login'}</Link>
+          <button onClick={() => authMode === 'login' ? login(): signup()}>{loading || logloading ? 'Submitting...' : `${authMode === 'login' ? 'Login' : 'Signup'}`}</button>
         </div>
       </Form>
     </div>

@@ -8,43 +8,41 @@ const ContactComp = () => {
   return (
     <>
       <div className='contact'>
-      <Form className='contact-form'>
-          <h1>We'd love to hear from you!</h1>
-          <h2>Let's get in touch</h2>
+        <div className='contact-text'>
+            <div className='tel'>
+              <img src={mobile} alt="" />
+              <h3>Call to Us</h3>
+            </div>
+            <p>We are available 24/7, 7 days a week.</p>
+            <p>Phone: <span>+8801611122</span></p>
+            <hr className='hr'/>
+            <div className='email'>
+              <img src={email} alt="" />
+              <h3>Write To Us</h3>
+            </div>
+            <p>Fill out our form and we will contact you within 24 hours.</p>
+            <p>Emails: customer@exclusive.com</p>
+        </div>
+        <Form className='contact-form'>
           <div className="col2">
             <p>
-              <label htmlFor="fullname">Full Name</label>
-              <input type="text" name='fullname' required/>
+              <input type="text" placeholder='your name' name='fullname' required/>
             </p>
             <p>
-              <label htmlFor="phone">Phone number</label>
-              <input type="tel" name='phone' required/>
+              <input type="tel" placeholder='Your phone' name='phone' required/>
+            </p>
+            <p>
+              <input type='email' placeholder='Your email' name='enail' required/>
             </p>
           </div>
+
           <p>
-            <label htmlFor="address">Address</label>
-            <input type='text' name='address' required/>
-          </p>
-          <p>
-            <label htmlFor="message">Your Message</label>
-            <textarea name="message" id="" col='2' required/>
+            <textarea name="message" placeholder='Your Message' id="" col='' required/>
           </p>
           <div className='action'>
             <button className='btn'>Send Message</button>
           </div>
         </Form>
-        <div className='contact-text'>
-          <h1>Contact Us</h1>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero</p>
-          <div className='email'>
-            <img src={email} alt="" />
-            <p>imginfo@snapit.com</p>
-          </div>
-          <div className='tel'>
-            <img src={mobile} alt="" />
-            <p>Support<span>(+21) 123 456</span></p>
-          </div>
-        </div>
       </div>
       <Footer />
     </>

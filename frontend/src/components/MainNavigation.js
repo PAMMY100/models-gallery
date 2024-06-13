@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux'
 import cart from '../assets/cart_icon.png'
 import menu from '../assets/icons8-menu-64.png'
 import close from '../assets/icons8-close-window-48.png'
-import { useRef, useState } from 'react'
-import { getAuthToken, useName } from '../utils'
+import {useRef, useState } from 'react'
+import { getAuthToken } from '../utils'
+
 
 
 export default function MainNavigation () {
@@ -16,7 +17,6 @@ export default function MainNavigation () {
   const count = useSelector(state => state.cart.totalQuantity)
   const isLogin = searchParams.get('mode') === 'login'
   const token = getAuthToken()
-  const { fetchdata } = useName()
 
   const handleToggleMenu = () => {
     setToggleMenu(prev => !prev)
@@ -30,6 +30,7 @@ export default function MainNavigation () {
     display = menu
   }
 
+  
   return (
     <header>
       <h1 className='logo'>logo</h1>
@@ -43,7 +44,7 @@ export default function MainNavigation () {
         </ul>
         <div className='cartContainer'>
           {!token && <Link to="/auth?mode=login"><Button>{isLogin ? 'Signup' : 'Login'}</Button></Link>}
-          {fetchdata && <p>{fetchdata}</p>}
+          {/* {fetchdata && <p>{fetchdata}</p>} */}
           <Link to={`${count > 0 ? '/cart' : '/'}`}>
             <div className='cartDiv'>
               <p className='count'>{count > 0 && (count)}</p>

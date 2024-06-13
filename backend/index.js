@@ -9,6 +9,7 @@ const cors = require("cors");
 const { type } = require('os');
 const { Schema } = require('mongoose');
 const { error } = require('console');
+const { verify } = require('crypto');
 //environment variables
 require('dotenv').config()
 
@@ -151,7 +152,7 @@ app.post('/signup', async (req, res) => {
         return res.status(400).json({success: false, message: "existing user with the email"})
       }
       let cart = {};
-      for (let i = 0; i < 300; i++) {
+      for (let i = 0; i < 100; i++) {
         cart[i] = 0
       };
 
@@ -199,11 +200,48 @@ app.post('/login', async (req, res) => {
   }
 })
 
-app.get('/user', async(req, res) => {
-  let user = await Users.findOne({email: req.body.email})
-  res.send(user)
-  console.log(user.name)
+//creating endpoint to fetch users
+app.get('/users', async (req, res) => {
+  const users = await Users.find({});
+  res.send(users)
 })
+
+//creating middleware to fetch user
+  const fetchUser = async (req, res, next) => {
+    const token = req.header('token');
+    if (!token) {
+      res.status(401).send({errors: "Please authenticate using a valid token"})
+    }
+    else {
+      try {
+        const data = jwt.verify(token, 'secret_ecom')
+        req.user = data.user
+        next()
+      } catch(error) {
+        res.status(401).send({errors: "Please authenticate using a valid token"})
+      }
+    }
+  }
+
+//creating endpoint for adding products in cartData
+app.post('/addtocart',fetchUser, async(req, res) => {
+  console.log(req.body,req.user)
+  // let userData = await Users.findOne({_id: req.user.id})
+  // userData.cartData[req.body.itemId] += 1
+  // await Users.findOneAndUpdate({_id: req.user.id},{cartData: userData.cartData});
+  // console.log(userData.cartData)
+  // res.send('added')
+})
+
+//creating endpoint for removing products in cartData
+app.post('/removefromcart', fetchUser, async(req, res) => {
+  let userData = await Users.findOne({_id: req.user.id})
+  userData.cartData[req.body.itemId] += 1
+  await Users.findOneAndUpdate({_id: req.user.id},{cartData: userData.cartData});
+  console.log(userData.cartData)
+  res.send('added')
+})
+
 
 app.listen(port, (error) => {
   if (!error) {

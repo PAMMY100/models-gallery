@@ -1,5 +1,6 @@
 import { json, redirect } from "react-router-dom";
 import Authform from "../components/Authform/Authform";
+import Footer from "../components/Footer/Footer";
 
 
 
@@ -8,6 +9,7 @@ export default function Authentication () {
   return (
     <>
       <Authform />
+      <Footer />
     </>
   )
 }

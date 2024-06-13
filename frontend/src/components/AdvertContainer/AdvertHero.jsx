@@ -11,6 +11,7 @@ import img3 from '../../assets/Male-models/m2.jpeg'
 import img4 from '../../assets/Female-models/f2.jpg'
 import img5 from '../../assets/Male-models/m11.webp'
 import img6 from '../../assets/Female-models/f4.jpeg'
+import { getAuthToken } from '../../utils'
 
 
 
@@ -47,6 +48,7 @@ const slider = [
   },
 ]
 const AdvertHero = () => {
+  const token = getAuthToken()
   return (
     <div className='container'>
       <div>
@@ -55,7 +57,7 @@ const AdvertHero = () => {
           <h1>Models gallery</h1>
           <hr />
           <p>We capture moment you can't envisage</p>
-          <Link to='/login'><p className='slider-btn'>explore</p></Link>
+          <Link to={token ? '/gallery' : '/auth'}><p className='slider-btn'>explore</p></Link>
         </div>
       </div>
       <Swiper 
@@ -98,7 +100,7 @@ const AdvertHero = () => {
               <div key={data.title}>
                 <h2>{data.title}</h2>
                 <p>{data.desription}</p>
-                <Link to='/login' className='slider-btn'>explore</Link>
+                <Link to={token ? '/gallery' : '/auth'}className='slider-btn'>explore</Link>
               </div>
             </SwiperSlide>
           ))

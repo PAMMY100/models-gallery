@@ -4,8 +4,10 @@ import CartSummary from "../components/CartSummary/CartSummary";
 import './Css/Cart.css'
 import { checkoutActions } from "../store/checkout-slice";
 import Checkout from "../components/Checkout/Checkout";
+import { getAuthToken } from "../utils";
 
 export default function Cart () {
+  const token = getAuthToken()
   const dispatch = useDispatch()
   const products = useSelector(state => state.cart)
   const count = useSelector(state => state.cart.totalQuantity)
@@ -16,7 +18,13 @@ export default function Cart () {
   }
 
   return (
-    <div className="cart">
+     <div className="cart">
+      {count > 0 && <div className="cartDescription">
+        <p className='product'>Product</p>
+        <p className="priceP">Price</p>
+        <p className="quantity">Quantity</p>
+        <p className="subtotal">Subtotal</p>
+      </div>}
       <ul className="cart-items">
         {
           products.items.map(item =>
@@ -37,7 +45,7 @@ export default function Cart () {
         products={products}
         openCheckout={handleOpenCheckout}
       />}
-      {isOpen && <Checkout />}
+      {token ? isOpen &&  <Checkout /> : alert('Kindly Login/Register to checkout cart')}
     </div>
   )
 }
