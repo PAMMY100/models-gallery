@@ -4,6 +4,9 @@ import { Provider } from 'react-redux'
 import './index.css';
 import App from './App';
 import store from './store/index';
+import { fetchCart } from './store/cart-slice';
+
+store.dispatch(fetchCart)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

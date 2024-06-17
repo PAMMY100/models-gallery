@@ -12,6 +12,7 @@ export default function Cart () {
   const products = useSelector(state => state.cart)
   const count = useSelector(state => state.cart.totalQuantity)
   const isOpen = useSelector(state=> state.checkout.checkoutStatus)
+  console.log(products.items);
 
   const handleOpenCheckout = () => {
     dispatch(checkoutActions.openCheckout())

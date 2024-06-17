@@ -7,19 +7,6 @@ const Item = (props) => {
 
   const addItemToCart = () => {
     dispatch(cartActions.addToCart({ id, category, img, price}))
-  //   if(localStorage.getItem('token')) {
-  //     fetch ('http://localhost:4000/addtocart', {
-  //       method: 'POST',
-  //       headers: {
-  //         Accept: 'application/form-data',
-  //         'token': `${localStorage.getItem('token')}`,
-  //         'Cotent-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({'itemId': id})
-  //     })
-  //       .then((response) => response.json())
-  //       .then((data) => console.log(data))
-  //   }
   }
 
   return (

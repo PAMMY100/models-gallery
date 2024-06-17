@@ -67,16 +67,20 @@ export function getAuthToken () {
   return token;
 }
 
+export async function postToDatabase (data) {
 
-// export async function useName() {
-//   const [fetchdata, setFetchData] = useState(null)
-//     useEffect(() => {
-//     fetch('http://localhost:4000/user')
-//       .then(res => res.json())
-//       .then(data => setFetchData(data.username))
-//     }, [])
-
-//     return {
-//       fetchdata
-//     }
-// }
+  if(localStorage.getItem('token')) {
+    const response = await fetch('http://localhost:4000/removefromcart',{
+      method: 'POST',
+      headers: {
+        Accept: 'application/form-data',
+        'token': `${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({'Items': data})
+    })
+    // .then((response) => response.json())
+    // .then((data) => console.log(data));
+    return await response.json()
+  }
+}

@@ -1,11 +1,25 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { postToDatabase } from "../utils";
+
+
+const initialState = {
+  items: [],
+  totalQuantity: 0,
+  status: null,
+}
+
+export const fetchCart = createAsyncThunk(
+  "cart/fetchCart",
+  async () => {
+    const response = await fetch("http://localhost:4000/cart");
+    const data = await response.json();
+    return data
+  }
+)
 
 const cartSlice = createSlice({
   name: 'cart',
-  initialState: {
-    items: [],
-    totalQuantity: 0
-  },
+  initialState,
   reducers: {
     addToCart(state, action){
       const newItem = action.payload;
@@ -27,19 +41,7 @@ const cartSlice = createSlice({
         existingItem.quantity++;
         existingItem.totalPrice = existingItem.totalPrice + newItem.price
       }
-      if(localStorage.getItem('token')) {
-        fetch('http://localhost:4000/addtocart',{
-          method: 'POST',
-          headers: {
-            Accept: 'application/form-data',
-            'token': `${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({'Items': state.items})
-        })
-        .then((response) => response.json())
-        .then((data) => console.log(data));
-      }
+      postToDatabase(state.items)
     },
     removeFromCart(state, action){
       const id = action.payload;
@@ -52,7 +54,21 @@ const cartSlice = createSlice({
         existingItem.quantity--;
         existingItem.totalPrice = existingItem.totalPrice - existingItem.price
       }
+      postToDatabase(state.items)
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchCart.pending, (state, action) => {
+      state.status = 'loading'
+    });
+    builder.addCase(fetchCart.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.items = action.payload;
+      state.totalQuantity = action.payload.reduce((total, item) => total + item.quantity, 0)
+    });
+    builder.addCase(fetchCart.rejected, (state, action) => {
+      state.status = "failed"
+    })
   }
 })
 

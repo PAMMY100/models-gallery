@@ -10,6 +10,7 @@ const { type } = require('os');
 const { Schema } = require('mongoose');
 const { error } = require('console');
 const { verify } = require('crypto');
+const bcrypt = require('bcrypt')
 //environment variables
 require('dotenv').config()
 
@@ -50,198 +51,214 @@ app.post("/upload", upload.single('product'),(req,res) => {
 })
 
 // Schema for creating Products
-const productSchema = new Schema({
-  id: {
-    type: Number,
+const cartItemSchema = new Schema({
+  productId: {
+    type: String,
     required: true
   },
-  image: {
+  name: {
     type: String,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
   },
   price: {
     type: Number,
+    require: true,
+  },
+  quantity: {
+    type: Number,
     required: true,
+    default: 1,
   },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-})
-
-const Product = mongoose.model('Product', productSchema)
-app.post('/addproduct', async (req, res) => {
-  try {
-    let products = await Product.find({});
-    let id;
-    if(products.length > 0) {
-      let last_product_array = products.slice(-1);
-      let last_product = last_product_array[0]
-      id = last_product.id + 1
-    }
-    else {
-      id = 1;
-    }
-    const product = new Product({
-      id: id,
-      image: req.body.image,
-      category: req.body.category,
-      price: req.body.price
-    })
-    console.log(product)
-    await product.save()
-    console.log("Saved")
-    res.json({
-      message: "product created successfully",
-      status: 200
-    })
-  } catch (error) {
-    console.log("Message: ", error)
+  totalPrice: {
+    type: Number,
+    required:  true,
   }
-})
+});
 
-// Creating API for deleting Products
-app.post('/removeproduct', async (req, res) => {
-  await Product.findOneAndDelete({id: req.body.id});
-  console.log("removed");
-  res.json({
-    success: true,
-    status: 200
-  })
-})
 
-app.get('/allproducts', async (req,res) => {
-  let products = await Product.find({});
-  console.log("All product fetched");
-  res.send(products)
-})
 
-// Schema creating for User model
-
-const usersSchema = new Schema({
-  name: {
-    type: String
+//creating user schema model
+const userSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
   },
   email: {
     type: String,
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
     unique: true,
   },
   password: {
-    type: String
+    type: String,
+    required: true,
   },
-  cartData: {
-    type:Object
-  },
+  cart: [cartItemSchema],
   date: {
     type: Date,
     default: Date.now
-  }
+  },
 })
-const Users = mongoose.model('Users', usersSchema)
 
-//Creating Endpoint for registering the user
-app.post('/signup', async (req, res) => {
+const User = mongoose.model('User', userSchema)
+
+//Route to sign up a new user
+app.post('/signup', async(req, res) => {
+  const {email, password, username} = req.body
+
   try {
-      let check = await Users.findOne({email: req.body.email});
+    let user = await User.findOne({email})
 
-      if (check) {
-        return res.status(400).json({success: false, message: "existing user with the email"})
-      }
-      let cart = {};
-      for (let i = 0; i < 100; i++) {
-        cart[i] = 0
-      };
+    if (user) {
+      return res.status(400).json({error: 'User already exists'});
+    }
 
-      const user = new Users ({
-        name: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        cartData: cart,
-      })
+    //Create new User
+    user = new User({
+      username,
+      email,
+      password,
+      cart: []
+    })
+    
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
 
-      await user.save()
+    // Save the user to the database
+    await user.save()
 
-      const data = {
-        user: {
-          id: user.id
-        }
-      }
+    // Create and assign a token
+    const data = {
+      user: {
+        id: user.id,
+      },
+    }
 
-      const token = jwt.sign(data, 'secret_ecom');
-      res.json({success: true, token})
-  } catch(error) {
-    console.log("message: ", error)
+    const token = jwt.sign(data, 'secret_ecom', { expiresIn: '1h' })
+
+    res.status(201).json({ success:true, token })
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error')
   }
 })
+
+//creating middleware to fetch user
+const fetchUser = async (req, res, next) => {
+  const token = req.header('token');
+  if (!token) {
+    res.status(401).send({errors: "Please authenticate using a valid token"})
+  }
+  else {
+    try {
+      const data = jwt.verify(token, 'secret_ecom')
+      req.user = data.user
+      next()
+    } catch(error) {
+      res.status(401).send({errors: "Please authenticate using a valid token"})
+    }
+  }
+}
+
 
 // creating endpoint for user login
 app.post('/login', async (req, res) => {
-  let user = await Users.findOne({email: req.body.email});
-  if (user) {
-    const passCompare = req.body.password === user.password;
-    if (passCompare) {
-      const data = {
-        user: {
-          id: user.id
-        }
-      }
-      const token = jwt.sign(data, 'secret_ecom');
-      res.json({success: true, token})
+  const {email, password} = req.body;
+  try {
+    let user = User.findOne({email});
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid Credentials' })
     }
-    else {
-      res.json({success: false, message: "wrong password!" })
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Invalid Credentials'});
     }
-  } else {
-    res.json({success: false, message: "wrong email ID"})
+
+    // create and assign a token
+    const data = {
+      User : {
+        id: user.id,
+      },
+    }
+
+    const token = jwt.sign(data, 'secret_ecom', {expiresIn: '1h'});
+
+    res.status(200).json({success: true, token})
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error')
   }
 })
 
 //creating endpoint to fetch users
 app.get('/users', async (req, res) => {
-  const users = await Users.find({});
+  const users = await User.find({});
   res.send(users)
 })
 
-//creating middleware to fetch user
-  const fetchUser = async (req, res, next) => {
-    const token = req.header('token');
-    if (!token) {
-      res.status(401).send({errors: "Please authenticate using a valid token"})
-    }
-    else {
-      try {
-        const data = jwt.verify(token, 'secret_ecom')
-        req.user = data.user
-        next()
-      } catch(error) {
-        res.status(401).send({errors: "Please authenticate using a valid token"})
-      }
-    }
-  }
 
 //creating endpoint for adding products in cartData
 app.post('/addtocart',fetchUser, async(req, res) => {
-  console.log(req.body,req.user)
-  // let userData = await Users.findOne({_id: req.user.id})
-  // userData.cartData[req.body.itemId] += 1
-  // await Users.findOneAndUpdate({_id: req.user.id},{cartData: userData.cartData});
-  // console.log(userData.cartData)
-  // res.send('added')
+  const { productId, quantity, price, totalPrice } = req.body;
+  try{
+    const user = await User.findById(req.user.id);
+    const cartItem = user.cart.find((item) => item.productId.toString() === productId);
+
+    if(cartItem) {
+      cartItem.quantity += quantity
+    } else {
+      user.cart.push({ productId, quantity, price, totalPrice})
+    }
+    await user.save();
+    res.status(200).json(user.cart)
+  } catch (error) {
+    console.error(error.message)
+    res.status(500).send('Server error')
+  }
 })
 
 //creating endpoint for removing products in cartData
 app.post('/removefromcart', fetchUser, async(req, res) => {
-  let userData = await Users.findOne({_id: req.user.id})
-  userData.cartData[req.body.itemId] += 1
-  await Users.findOneAndUpdate({_id: req.user.id},{cartData: userData.cartData});
-  console.log(userData.cartData)
-  res.send('added')
+  const {productId, quantity} = req.body
+  try {
+    const user = await User.findById(req.user.id)
+    const existingCartItem = user.cart.find((item) => item.productId.toString() === productId )
+
+    if (existingCartItem.quantity > 1) {
+      existingCartItem.quantity--
+    } else {
+      const cartItem = user.cart.filter((item) => item.productId.toString() !== productId)
+    }
+
+    await user.save();
+    res.status(200).json(user.cart);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error')
+  }
 })
 
+
+//creating endpoint to fetch existingItem in cart
+app.get('/cart',fetchUser, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('cart');
+    if (!user) {
+        return res.status(404).send({ errors: "User not found" });
+    }
+    console.log(user.cartData)
+    res.json(user.cart);
+} catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server error');
+}
+})
 
 app.listen(port, (error) => {
   if (!error) {
