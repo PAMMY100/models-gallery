@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { postToDatabase } from "../utils";
+import { addToDatabase, removeFromDatabase } from "../utils";
 
 
 const initialState = {
@@ -34,14 +34,13 @@ const cartSlice = createSlice({
           quantity: 1,
           totalPrice: newItem.price
         })
-        setTimeout(() => {
-          alert('Item added to cart')
-        }, 1000)
+
+        alert('Item added to cart')
       } else {
         existingItem.quantity++;
         existingItem.totalPrice = existingItem.totalPrice + newItem.price
       }
-      postToDatabase(state.items)
+      addToDatabase(state.items)
     },
     removeFromCart(state, action){
       const id = action.payload;
@@ -54,7 +53,7 @@ const cartSlice = createSlice({
         existingItem.quantity--;
         existingItem.totalPrice = existingItem.totalPrice - existingItem.price
       }
-      postToDatabase(state.items)
+      removeFromDatabase(state.items)
     }
   },
   extraReducers: (builder) => {
@@ -64,7 +63,6 @@ const cartSlice = createSlice({
     builder.addCase(fetchCart.fulfilled, (state, action) => {
       state.status = 'succeeded';
       state.items = action.payload;
-      state.totalQuantity = action.payload.reduce((total, item) => total + item.quantity, 0)
     });
     builder.addCase(fetchCart.rejected, (state, action) => {
       state.status = "failed"

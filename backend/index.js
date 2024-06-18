@@ -11,11 +11,13 @@ const { Schema } = require('mongoose');
 const { error } = require('console');
 const { verify } = require('crypto');
 const bcrypt = require('bcrypt')
+
 //environment variables
 require('dotenv').config()
 
 app.use(express.json())
 app.use(cors())
+
 
 //Database connection with MongoDB
 mongoose.connect(process.env.MONGO_URI, {useUnifiedTopology: true})
@@ -50,65 +52,21 @@ app.post("/upload", upload.single('product'),(req,res) => {
   })
 })
 
-// Schema for creating Products
-const cartItemSchema = new Schema({
-  productId: {
-    type: String,
-    required: true
-  },
-  name: {
-    type: String,
-  },
-  price: {
-    type: Number,
-    require: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    default: 1,
-  },
-  totalPrice: {
-    type: Number,
-    required:  true,
-  }
-});
-
 
 
 //creating user schema model
-const userSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  cart: [cartItemSchema],
-  date: {
-    type: Date,
-    default: Date.now
-  },
-})
+const UserSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  cart: { type: Array, default: [] }
+});
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model('User', UserSchema)
 
 //Route to sign up a new user
 app.post('/signup', async(req, res) => {
-  const {email, password, username} = req.body
+  const {email, password, username, cart} = req.body
 
   try {
     let user = await User.findOne({email})
@@ -122,9 +80,9 @@ app.post('/signup', async(req, res) => {
       username,
       email,
       password,
-      cart: []
+      cart,
     })
-    
+
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
@@ -170,9 +128,9 @@ const fetchUser = async (req, res, next) => {
 app.post('/login', async (req, res) => {
   const {email, password} = req.body;
   try {
-    let user = User.findOne({email});
+    let user = await User.findOne({email});
     if (!user) {
-      return res.status(400).json({ error: 'Invalid Credentials' })
+      return res.status(400).json({error: 'Invalid Credentials'})
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -205,16 +163,17 @@ app.get('/users', async (req, res) => {
 
 //creating endpoint for adding products in cartData
 app.post('/addtocart',fetchUser, async(req, res) => {
-  const { productId, quantity, price, totalPrice } = req.body;
   try{
-    const user = await User.findById(req.user.id);
-    const cartItem = user.cart.find((item) => item.productId.toString() === productId);
+    const user = await User.findById(req.user.id)
+    user.cart = req.body.Items
+    // const user = await User.findById(req.user.id);
+    // const cartItem = user.cart.find((item) => item.productId.toString() === productId);
 
-    if(cartItem) {
-      cartItem.quantity += quantity
-    } else {
-      user.cart.push({ productId, quantity, price, totalPrice})
-    }
+    // if(cartItem) {
+    //   cartItem.quantity += quantity
+    // } else {
+    //   user.cart.push({ productId, quantity, price, totalPrice})
+    // }
     await user.save();
     res.status(200).json(user.cart)
   } catch (error) {
@@ -225,16 +184,9 @@ app.post('/addtocart',fetchUser, async(req, res) => {
 
 //creating endpoint for removing products in cartData
 app.post('/removefromcart', fetchUser, async(req, res) => {
-  const {productId, quantity} = req.body
-  try {
-    const user = await User.findById(req.user.id)
-    const existingCartItem = user.cart.find((item) => item.productId.toString() === productId )
-
-    if (existingCartItem.quantity > 1) {
-      existingCartItem.quantity--
-    } else {
-      const cartItem = user.cart.filter((item) => item.productId.toString() !== productId)
-    }
+  try{
+    let user = await User.findById(req.user.id)
+    user.cart = req.body.Items
 
     await user.save();
     res.status(200).json(user.cart);
@@ -248,11 +200,12 @@ app.post('/removefromcart', fetchUser, async(req, res) => {
 //creating endpoint to fetch existingItem in cart
 app.get('/cart',fetchUser, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('cart');
+    const user = await User.findById(req.user.id)
+    
     if (!user) {
         return res.status(404).send({ errors: "User not found" });
     }
-    console.log(user.cartData)
+    console.log(user.cart)
     res.json(user.cart);
 } catch (error) {
     console.error(error.message);

@@ -67,7 +67,25 @@ export function getAuthToken () {
   return token;
 }
 
-export async function postToDatabase (data) {
+export async function addToDatabase (data) {
+
+  if(localStorage.getItem('token')) {
+    const response = await fetch('http://localhost:4000/addtocart',{
+      method: 'POST',
+      headers: {
+        Accept: 'application/form-data',
+        'token': `${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({'Items': data})
+    })
+    // .then((response) => response.json())
+    // .then((data) => console.log(data));
+    return await response.json()
+  }
+}
+
+export async function removeFromDatabase (data) {
 
   if(localStorage.getItem('token')) {
     const response = await fetch('http://localhost:4000/removefromcart',{
