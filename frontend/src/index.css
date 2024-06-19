@@ -12,12 +12,63 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* #modal {
+.modal {
+  margin: 0;
+  padding: 2rem;
   position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
+  top: 10vh;
+  left: calc(50% - 15rem);
+  width: 60rem;
+  max-height: 80vh;
+  background: #e2e5eb;
+  overflow: hidden;
+  border: none;
+  border-radius: 6px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slide-down-fade-in 300ms ease-out forwards;
+}
+
+.modal::backdrop {
   height: 100vh;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-} */
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+
+@keyframes slide-down-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media(max-width: 834px) {
+
+}
+
+@media(max-width: 575px) {
+  .modal {
+    position: fixed;
+    left: 0;
+    right: -0px;
+    width: 400px;
+    height: 40vh;
+    box-shadow: none;
+    margin-left: 5%;
+  }
+}

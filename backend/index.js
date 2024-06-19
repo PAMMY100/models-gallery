@@ -16,7 +16,12 @@ const bcrypt = require('bcrypt')
 require('dotenv').config()
 
 app.use(express.json())
-app.use(cors())
+
+app.use(cors({
+  origin: ["https://models-gallery.vercel.app"],
+  methods: ["POST", "GET"],
+  credentials: true
+}))
 
 
 //Database connection with MongoDB
@@ -97,7 +102,7 @@ app.post('/signup', async(req, res) => {
       },
     }
 
-    const token = jwt.sign(data, 'secret_ecom', { expiresIn: '1h' })
+    const token = jwt.sign(data, 'secret_ecom')
 
     res.status(201).json({ success:true, token })
   } catch (error) {
@@ -106,22 +111,7 @@ app.post('/signup', async(req, res) => {
   }
 })
 
-//creating middleware to fetch user
-const fetchUser = async (req, res, next) => {
-  const token = req.header('token');
-  if (!token) {
-    res.status(401).send({errors: "Please authenticate using a valid token"})
-  }
-  else {
-    try {
-      const data = jwt.verify(token, 'secret_ecom')
-      req.user = data.user
-      next()
-    } catch(error) {
-      res.status(401).send({errors: "Please authenticate using a valid token"})
-    }
-  }
-}
+
 
 
 // creating endpoint for user login
@@ -140,12 +130,12 @@ app.post('/login', async (req, res) => {
 
     // create and assign a token
     const data = {
-      User : {
+      user : {
         id: user.id,
       },
     }
 
-    const token = jwt.sign(data, 'secret_ecom', {expiresIn: '1h'});
+    const token = jwt.sign(data, 'secret_ecom');
 
     res.status(200).json({success: true, token})
   } catch (error) {
@@ -153,6 +143,22 @@ app.post('/login', async (req, res) => {
     res.status(500).send('Server error')
   }
 })
+
+//creating middleware to fetch user
+const fetchUser = async (req, res, next) => {
+  const token = req.header('token');
+  if (!token) {
+      return res.status(401).send({ errors: "Please authenticate using a valid token" });
+  }
+  try {
+      const data = jwt.verify(token, 'secret_ecom');
+      req.user = data.user;
+      next();
+  } catch (error) {
+      console.error(error);
+      res.status(401).send({ errors: "Please authenticate using a valid token" });
+  }
+};
 
 //creating endpoint to fetch users
 app.get('/users', async (req, res) => {
@@ -164,16 +170,13 @@ app.get('/users', async (req, res) => {
 //creating endpoint for adding products in cartData
 app.post('/addtocart',fetchUser, async(req, res) => {
   try{
-    const user = await User.findById(req.user.id)
+    let user = await User.findById({_id: req.user.id})
     user.cart = req.body.Items
-    // const user = await User.findById(req.user.id);
-    // const cartItem = user.cart.find((item) => item.productId.toString() === productId);
 
-    // if(cartItem) {
-    //   cartItem.quantity += quantity
-    // } else {
-    //   user.cart.push({ productId, quantity, price, totalPrice})
-    // }
+    if (!user) {
+      return res.status(404).send('User not found');
+  }
+
     await user.save();
     res.status(200).json(user.cart)
   } catch (error) {
@@ -185,8 +188,12 @@ app.post('/addtocart',fetchUser, async(req, res) => {
 //creating endpoint for removing products in cartData
 app.post('/removefromcart', fetchUser, async(req, res) => {
   try{
-    let user = await User.findById(req.user.id)
+    let user = await User.findById({_id: req.user.id})
     user.cart = req.body.Items
+
+    if (!user) {
+      return res.status(404).send('User not found');
+  }
 
     await user.save();
     res.status(200).json(user.cart);
@@ -201,12 +208,12 @@ app.post('/removefromcart', fetchUser, async(req, res) => {
 app.get('/cart',fetchUser, async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-    
+
     if (!user) {
         return res.status(404).send({ errors: "User not found" });
     }
     console.log(user.cart)
-    res.json(user.cart);
+    res.json(user.cart)
 } catch (error) {
     console.error(error.message);
     res.status(500).send('Server error');

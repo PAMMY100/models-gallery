@@ -46,10 +46,10 @@ export default function MainNavigation () {
           {!token && <Link to="/auth?mode=login"><Button>{isLogin ? 'Signup' : 'Login'}</Button></Link>}
           {/* {fetchdata && <p>{fetchdata}</p>} */}
           <Link to={`${count > 0 ? '/cart' : '/'}`}>
-            <div className='cartDiv'>
+            {token && <div className='cartDiv'>
               <p className='count'>{count > 0 && (count)}</p>
               <img className='cartImg' src={cart} alt=""/>
-            </div>
+            </div>}
           </Link>
           {token && <Form method='post' action='/logout'>
             <button>Logout</button>

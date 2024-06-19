@@ -23,7 +23,7 @@ const router = createBrowserRouter([
       {path: 'auth', element: <Authentication />},
       {path: 'logout', action:logoutAction,
       },
-      {path: 'cart', element: <Cart/>}
+      { path: 'cart', element: <Cart/>}
     ]
   }
 ])

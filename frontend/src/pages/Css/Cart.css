@@ -96,7 +96,7 @@
   .cart-summary {
     position: fixed;
     overflow: hidden;
-    right: 3%;
+    right: -2%;
   }
   .cartDescription {
     width: 400px;
@@ -121,7 +121,7 @@
     height: 280px;
     position: fixed;
     overflow: hidden;
-    right: 0;
+    right: -2%;
   }
 
   .cart-summary h1 {

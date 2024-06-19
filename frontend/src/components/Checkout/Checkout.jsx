@@ -1,7 +1,7 @@
 import { Form } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { checkoutActions } from '../../store/checkout-slice'
-import './Checkout.css'
+
 
 const Checkout = () => {
 

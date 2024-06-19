@@ -3,10 +3,10 @@ import CartList from "../components/cartlist/CartList";
 import CartSummary from "../components/CartSummary/CartSummary";
 import './Css/Cart.css'
 import { checkoutActions } from "../store/checkout-slice";
-import Checkout from "../components/Checkout/Checkout";
+// import Checkout from "../components/Checkout/Checkout";
 import { getAuthToken } from "../utils";
-import { useEffect } from "react";
-import { fetchCart } from "../store/cart-slice";
+import CheckoutForm from "../components/Checkout/CheckoutForm";
+
 
 export default function Cart () {
   const token = getAuthToken()
@@ -15,11 +15,7 @@ export default function Cart () {
   const count = useSelector(state => state.cart.totalQuantity)
   const isOpen = useSelector(state=> state.checkout.checkoutStatus)
 
-  // useEffect(() => {
-  //   dispatch(fetchCart())
-  // }, [dispatch])
 
-  // console.log(products.items)
 
   const handleOpenCheckout = () => {
     dispatch(checkoutActions.openCheckout())
@@ -53,7 +49,7 @@ export default function Cart () {
         products={products}
         openCheckout={handleOpenCheckout}
       />}
-      {token ? isOpen &&  <Checkout /> : alert('Kindly Login/Register to checkout cart')}
+      {token ? isOpen &&  <CheckoutForm /> : alert('Kindly Login/Register to checkout cart')}
     </div>
   )
 }

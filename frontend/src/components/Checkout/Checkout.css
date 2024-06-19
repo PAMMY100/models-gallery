@@ -1,12 +1,4 @@
 .checkout-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 200;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,7 +12,7 @@
   text-align: center;
 }
 
-.modal h1 {
+ .checkoutText {
   margin-bottom: 10px;
   color: rgb(120, 69, 69);
 }
@@ -30,8 +22,8 @@
 .state-field input {
   height: 30px;
   width: 100%;
-  padding-left: 10px;
   border-radius: 4px;
+  margin-top: 20px;
   border: none;
   color: black;
   background-color: lightgrey;
@@ -39,17 +31,22 @@
 .namePh-field {
   display: flex;
 }
-label {
-  display: block;
+
+.name input, 
+.phone input {
+  width: 100%;
+  gap: 30px;
+}
+.name {
+  margin-right: 20px;
 }
 .name,
 .phone {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 30px;
   align-items: center;
   margin-top: 0;
-  margin-right: 10px;
   color: rgb(120, 69, 69);
 }
 .street label,
@@ -61,12 +58,13 @@ label {
 .street input {
   width: 100%;
   padding: 10px;
+  margin-right: 10px;
 }
 
 .state-field {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 10px;
 }
 
 .state-field input {
