@@ -11,7 +11,7 @@ const initialState = {
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
   async () => {
-    const response = await fetch("http://localhost:4000/cart");
+    const response = await fetch("https://models-gallery-api.vercel.app/cart");
     const data = await response.json();
     return data
   }
