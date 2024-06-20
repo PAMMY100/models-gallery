@@ -6,7 +6,7 @@ export function useSignup(fetchSignup) {
 
     fetchSignup = async (formData) => {
       setLoading(true)
-      const response = await fetch(`http://localhost:4000/signup`, {
+      const response = await fetch(`https://models-gallery-api.vercel.app/signup`, {
           method: 'POST',
           headers: {
             Accept: 'application/form-data',
@@ -37,7 +37,7 @@ export function useLogin() {
   const [loading, setLoading] = useState(false)
     const fetchLogin = async (formData) => {
     setLoading(true)
-    const response = await fetch(`http://localhost:4000/login`, {
+    const response = await fetch(`https://models-gallery-api.vercel.app/login`, {
         method: 'POST',
         headers: {
           Accept: 'application/form-data',
@@ -70,7 +70,7 @@ export function getAuthToken () {
 export async function addToDatabase (data) {
 
   if(localStorage.getItem('token')) {
-    const response = await fetch('http://localhost:4000/addtocart',{
+    const response = await fetch('https://models-gallery-api.vercel.app/addtocart',{
       method: 'POST',
       headers: {
         Accept: 'application/form-data',
@@ -88,7 +88,7 @@ export async function addToDatabase (data) {
 export async function removeFromDatabase (data) {
 
   if(localStorage.getItem('token')) {
-    const response = await fetch('http://localhost:4000/removefromcart',{
+    const response = await fetch('https://models-gallery-api.vercel.app/removefromcart',{
       method: 'POST',
       headers: {
         Accept: 'application/form-data',
