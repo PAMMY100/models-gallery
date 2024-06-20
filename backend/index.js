@@ -51,10 +51,16 @@ const upload = multer({storage:storage})
 // Creating Upload Endpoint for images
 app.use('/images', express.static('upload/images'))
 app.post("/upload", upload.single('product'),(req,res) => {
-  res.json({
-    success: 1,
-    image_url: `http://localhost:${port}/images/${req.file.filename}`
-  })
+  try {
+    res.json({
+      success: 1,
+      image_url: `http://localhost:${port}/images/${req.file.filename}`
+    })
+
+  } catch(error) {
+    console.log(error.message)
+    res.status(500).send("server error")
+  }
 })
 
 
@@ -159,12 +165,6 @@ const fetchUser = async (req, res, next) => {
       res.status(401).send({ errors: "Please authenticate using a valid token" });
   }
 };
-
-//creating endpoint to fetch users
-app.get('/users', async (req, res) => {
-  const users = await User.find({});
-  res.send(users)
-})
 
 
 //creating endpoint for adding products in cartData

@@ -7,6 +7,7 @@ import menu from '../assets/icons8-menu-64.png'
 import close from '../assets/icons8-close-window-48.png'
 import {useRef, useState } from 'react'
 import { getAuthToken } from '../utils'
+import logo from '../assets/logo.jpg'
 
 
 
@@ -33,7 +34,12 @@ export default function MainNavigation () {
   
   return (
     <header>
-      <h1 className='logo'>logo</h1>
+      <div className='logoContainer'>
+        <Link to='/'>
+          <img className='cam' src={logo} alt=''/>
+          <h1 className='logo'>ShotIT</h1>
+        </Link>
+      </div>
       <img className='menu' src={display} alt="" onClick={handleToggleMenu} />
       <div ref={menuRef} className='nav-container'>
         <ul className='navMenu'>
