@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { redirect } from "react-router-dom";
 
 export function useSignup(fetchSignup) {
   const [errorStage, setErrorStage] = useState(false)
@@ -51,11 +52,10 @@ export function useLogin() {
       const data = await response.json()
       if(!data.success) {
         setErrorMode(true)
+        return
       }
-      else {
-        localStorage.setItem('token', data.token)
-        window.location.replace('/')
-      }
+      localStorage.setItem('token', data.token)
+      return redirect('/')
     }
   return {
     loginError: errorMode,
