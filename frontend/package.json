@@ -44,5 +44,6 @@
   },
   "devDependencies": {
     "web-vitals": "^4.0.0"
-  }
+  },
+  "proxy":"https://models-gallery-api.vercel.app"
 }
