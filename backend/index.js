@@ -18,14 +18,14 @@ require('dotenv').config()
 app.use(express.json())
 
 app.use(cors({
-  origin: ["models-gallery-api.vercel.app"],
+  origin: ["https://models-gallery-api.vercel.app"],
   methods: ["POST", "GET"],
   credentials: true
 }))
 
 
 //Database connection with MongoDB
-mongoose.connect(process.env.MONGO_URI, {useUnifiedTopology: true})
+mongoose.connect(process.env.MONGO_URI)
 
 
 const connection = mongoose.connection;
