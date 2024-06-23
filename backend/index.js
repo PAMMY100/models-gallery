@@ -19,7 +19,8 @@ app.use(express.json())
 app.use(cors({
   origin: ["https://models-gallery-api.vercel.app"],
   methods: ["POST", "GET"],
-  credentials: true
+  credentials: true,
+  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
 }))
 
 
