@@ -17,11 +17,10 @@ require('dotenv').config()
 app.use(express.json())
 
 app.use(cors({
-  origin: ["https://models-frontend.vercel.app"],
-  methods: ["POST", "GET"],
-  credentials: true,
+  origin: 'https://models-frontend.vercel.app', // Replace with your frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-}))
+}));
 
 
 //Database connection with MongoDB

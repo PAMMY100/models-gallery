@@ -1,67 +1,95 @@
 import { useState } from "react";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export function useSignup(fetchSignup) {
-  const [errorStage, setErrorStage] = useState(false)
-  const [loading, setLoading] = useState(false)
+export function useSignup() {
+  const [errorStage, setErrorStage] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-    fetchSignup = async (formData) => {
-      setLoading(true)
-      const response = await fetch(`https://models-gallery-api.vercel.app/signup`, {
-          mode: "no-cors",
-          method: 'POST',
-          headers: {
-            Accept: 'application/form-data',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
-        })
-        const data = await response.json()
+  const fetchSignup = async (formData) => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://models-gallery-api.vercel.app/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-        setLoading(false)
-        if(!data.success) {
-          setErrorStage(true)
-        }
-        else {
-          localStorage.setItem('token', data.token)
-          window.location.replace('/')
-        }
+      if (!response.ok) {
+        throw new Error('Signup request failed');
+      }
+
+      const data = await response.json();
+      setLoading(false);
+
+      if (!data.success) {
+        setErrorStage(true);
+      } else {
+        localStorage.setItem('token', data.token);
+        navigate('/'); // Navigate to home or desired route after signup
+      }
+    } catch (error) {
+      console.error('Error during signup:', error);
+      setLoading(false);
+      setErrorStage(true);
     }
+  };
+
   return {
     errorStage,
     loading,
-    fetchSignup
-  }
+    fetchSignup,
+  };
 }
 
 export function useLogin() {
-  const [errorMode, setErrorMode] = useState(false)
-  const [loading, setLoading] = useState(false)
-    const fetchLogin = async (formData) => {
-    setLoading(true)
-    const response = await fetch(`https://models-gallery-api.vercel.app/login`, {
-        mode: "no-cors",
+  const [errorMode, setErrorMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const fetchLogin = async (formData) => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://models-gallery-api.vercel.app/login', {
         method: 'POST',
         headers: {
-          Accept: 'application/form-data',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
-      })
-      setLoading(false)
-      const data = await response.json()
-      if(!data.success) {
-        setErrorMode(true)
-        return
+      });
+
+      setLoading(false);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMode(true);
+        console.error('Login error:', errorData.message);
+        return;
       }
-      localStorage.setItem('token', data.token)
-      return redirect('/')
+
+      const data = await response.json();
+
+      if (!data.success) {
+        setErrorMode(true);
+        return;
+      }
+
+      localStorage.setItem('token', data.token);
+      navigate('/'); // Redirect to home or desired route
+    } catch (error) {
+      setLoading(false);
+      setErrorMode(true);
+      console.error('Network or server error:', error);
     }
+  };
+
   return {
     loginError: errorMode,
     logloading: loading,
     fetchLogin
-  }
+  };
 }
 
 export function getAuthToken () {
