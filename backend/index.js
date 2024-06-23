@@ -38,23 +38,6 @@ app.get("/", (req, res) => {
 })
 
 
-// Creating Upload Endpoint for images
-app.use('/images', express.static('upload/images'))
-app.post("/upload", upload.single('product'),(req,res) => {
-  try {
-    res.json({
-      success: 1,
-      image_url: `http://localhost:${port}/images/${req.file.filename}`
-    })
-
-  } catch(error) {
-    console.log(error.message)
-    res.status(500).send("server error")
-  }
-})
-
-
-
 //creating user schema model
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
