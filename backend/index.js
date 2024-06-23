@@ -17,7 +17,7 @@ require('dotenv').config()
 app.use(express.json())
 
 app.use(cors({
-  origin: "https://models-frontend.vercel.app",
+  origin: ["https://models-frontend.vercel.app"],
   methods: ["POST", "GET"],
   credentials: true,
   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
