@@ -7,6 +7,7 @@ export function useSignup(fetchSignup) {
     fetchSignup = async (formData) => {
       setLoading(true)
       const response = await fetch(`https://models-gallery-api.vercel.app/signup`, {
+          mode: 'no-cors',
           method: 'POST',
           headers: {
             Accept: 'application/form-data',
@@ -38,6 +39,7 @@ export function useLogin() {
     const fetchLogin = async (formData) => {
     setLoading(true)
     const response = await fetch(`https://models-gallery-api.vercel.app/login`, {
+        mode: 'no-cors',
         method: 'POST',
         headers: {
           Accept: 'application/form-data',
