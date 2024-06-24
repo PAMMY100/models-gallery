@@ -144,7 +144,7 @@ const fetchUser = async (req, res, next) => {
       console.error(error);
       res.status(401).send({ errors: "Please authenticate using a valid token" });
   }
-}
+};
 
 
 //creating endpoint for adding products in cartData
