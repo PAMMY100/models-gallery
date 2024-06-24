@@ -10,7 +10,6 @@ export function useSignup() {
     setLoading(true);
     try {
       const response = await fetch('https://models-gallery-api.vercel.app/signup', {
-        mode: "no-cors",
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +53,6 @@ export function useLogin() {
     setLoading(true);
     try {
       const response = await fetch('https://models-gallery-api.vercel.app/login', {
-        mode: "no-cors",
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
