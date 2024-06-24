@@ -48,7 +48,7 @@ app.use(function(req, res, next) {
 //setup origin in cors
 
 app.use(cors({
-  origin: 'https://models-frontend.vercel.app', // Replace with your frontend URL
+  origin: "*", // Replace with your frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
 }));
