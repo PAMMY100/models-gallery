@@ -9,7 +9,7 @@ export function useSignup() {
   const fetchSignup = async (formData) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/signup', {
+      const response = await fetch('https://models-gallery-api.vercel.app/signup', {
         mode: "no-cors",
         method: 'POST',
         headers: {
@@ -53,7 +53,7 @@ export function useLogin() {
   const fetchLogin = async (formData) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/login', {
+      const response = await fetch('https://models-gallery-api.vercel.app/login', {
         mode: "no-cors",
         method: 'POST',
         headers: {
