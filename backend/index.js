@@ -45,6 +45,14 @@ app.use(function(req, res, next) {
   next()
 })
 
+//setup origin in cors
+
+app.use(cors({
+  origin: 'https://models-frontend.vercel.app', // Replace with your frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+}));
+
 //creating user schema model
 const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
