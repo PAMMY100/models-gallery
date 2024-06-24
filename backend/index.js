@@ -38,20 +38,13 @@ app.get("/", (req, res) => {
 })
 
 //middleware for access-control
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', "*");
+const corsMiddleware = app.use( async function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', "https://models-frontend.vercel.app");
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   next()
 })
 
-//setup origin in cors
-
-app.use(cors({
-  origin: "*", // Replace with your frontend URL
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-}));
 
 //creating user schema model
 const UserSchema = new mongoose.Schema({
@@ -64,7 +57,7 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema)
 
 //Route to sign up a new user
-app.post('/signup', async(req, res) => {
+app.post('/signup', corsMiddleware, async(req, res) => {
   const {email, password, username, cart} = req.body
 
   try {
@@ -107,9 +100,8 @@ app.post('/signup', async(req, res) => {
 
 
 
-
 // creating endpoint for user login
-app.post('/login', async (req, res) => {
+app.post('/login', corsMiddleware, async (req, res) => {
   const {email, password} = req.body;
   try {
     let user = await User.findOne({email});
