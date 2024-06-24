@@ -132,6 +132,6 @@
 
 @media(max-width: 575px) {
   .container {
-    padding-top: 30px;
+    padding-top: 30%;
   }
 }
