@@ -38,12 +38,12 @@ app.get("/", (req, res) => {
 })
 
 //middleware for access-control
-const corsMiddleware = app.use( async function(req, res, next) {
+const corsMiddleware = async function(req, res, next) {
   res.header('Access-Control-Allow-Origin', "https://models-frontend.vercel.app");
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   next()
-})
+}
 
 
 //creating user schema model
