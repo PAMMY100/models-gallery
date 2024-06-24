@@ -50,7 +50,6 @@ const User = mongoose.model('User', UserSchema)
 
 //Route to sign up a new user
 app.post('/signup', async(req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
   const {email, password, username, cart} = req.body
 
   try {
@@ -96,7 +95,6 @@ app.post('/signup', async(req, res) => {
 
 // creating endpoint for user login
 app.post('/login', async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
   const {email, password} = req.body;
   try {
     let user = await User.findOne({email});
@@ -127,7 +125,6 @@ app.post('/login', async (req, res) => {
 
 //creating middleware to fetch user
 const fetchUser = async (req, res, next) => {
-  res.set('Access-Control-Allow-Origin', '*');
   const token = req.header('token');
   if (!token) {
       return res.status(401).send({ errors: "Please authenticate using a valid token" });
