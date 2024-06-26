@@ -6,18 +6,11 @@ import { checkoutActions } from "../store/checkout-slice";
 // import Checkout from "../components/Checkout/Checkout";
 import { getAuthToken } from "../utils";
 import CheckoutForm from "../components/Checkout/CheckoutForm";
-import { useEffect } from "react";
-import { fetchCart } from "../store/cart-slice";
 
 
 export default function Cart () {
   const token = getAuthToken()
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(fetchCart())
-  },[dispatch])
-
   const products = useSelector(state => state.cart)
   const count = useSelector(state => state.cart.totalQuantity)
   const isOpen = useSelector(state=> state.checkout.checkoutStatus)
